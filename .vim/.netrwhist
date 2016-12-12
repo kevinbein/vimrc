@@ -1,0 +1,8 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =6
+let g:netrw_dirhist_1='/Users/jimetsu/.vim/bundle/Vundle.vim'
+let g:netrw_dirhist_2='/Library/PreferencePanes/MySQL.prefPane'
+let g:netrw_dirhist_3='/Users/jimetsu/Projekte/ibm-appatnight-client/.git'
+let g:netrw_dirhist_4='/Users/jimetsu/.vim'
+let g:netrw_dirhist_5='/usr/local/etc/dovecot/conf.d'
+let g:netrw_dirhist_6='/Users/jimetsu/.vim'
