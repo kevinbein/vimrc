@@ -19,11 +19,12 @@ Plugin 'vim-airline/vim-airline-themes'
 "Plugin 'powerline/powerline'
 "Plugin 'Valloric/YouCompleteMe'
 Plugin 'godlygeek/tabular'
-Plugin 'wincent/terminus'
+"Plugin 'wincent/terminus'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'zacanger/angr.vim'
 Plugin 'ajh17/Spacegray.vim'
 Plugin 'rayburgemeestre/phpfolding.vim'
+Plugin 'altercation/vim-colors-solarized.git'
 
 "filetype plugin indent on
 filetype plugin on
@@ -110,12 +111,18 @@ nnoremap N Nzz
 
 " elimnate esc delay
 " also affects <leader> delay so we just remap <esc> to work instantly
+set notimeout
+set ttimeout
 set timeoutlen=200 ttimeoutlen=0
 syntax sync minlines=100
 syntax sync maxlines=240
 set synmaxcol=800
-"nnoremap <Esc> <Esc><Esc>
-"vnoremap <Esc> <Esc><Esc>
+" Terminus does some bs that I don't need and that interfers with <Esc>, we
+" just unset it.
+"iunmap <Esc>[200~
+"vunmap <Esc>[200~
+inoremap <Esc> <Esc><Esc>
+vnoremap <Esc> <Esc><Esc>
 
 " Colored line spacer after 80 characters
 " vim built in:
@@ -130,8 +137,19 @@ set colorcolumn=80
 "  highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 " match OverLength /\%81v.\+/
 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa     
+
 "colorscheme angr
-colorscheme spacegray
+
+" Spacegray dark
+"colorscheme spacegray
+
+" Solarized dark
+set background=dark
+colorscheme solarized
+
+" Solarized light
+"set background=light
+"colorscheme solarized
 
 set shortmess+=A
 set relativenumber 
@@ -159,6 +177,9 @@ autocmd VimEnter * wincmd p
 set backupdir=~/.vim/tmp/backup//
 set directory=~/.vim/tmp/swap//
 set undodir=~/.vim/tmp/undo//
+set undofile
+set undolevels=10000
+set undoreload=100000
 set backup
 set noswapfile
 
@@ -167,6 +188,7 @@ set mouse=a
 " airline
 let g:airline_powerline_fonts = 1
 if !exists('g:airline_symbols')
+  "let g:airline_symbols = {}WWW
   let g:airline_symbols = {}
 endif
 let g:airline_symbols.space = "\ua0"
@@ -200,3 +222,51 @@ let mapleader = "ä"
 xnoremap p "_dP
 "xnoremap p pgv"@=v:register.'y'<c-r>
 
+"nnoremap <Tab> I
+
+" highlight search items
+set hlsearch
+nnoremap <S-q> :noh<ENTER>
+
+" searching for lowercase characters matches uppercase letters as well but if
+" I put a uppercase character into the search string it searches case
+" sensitive
+set ignorecase
+set smartcase
+
+" when saving, I sometimes hit :w too fast and since : needs the shift key 'w'
+" ends up as W, same with q ending up as Q so we just map those to their
+" lowercase equivalents
+command W w
+command Q q
+
+" map <leader>/ to do a vimgrep
+nmap <leader>/ :tabe<CR>:vimgrep // ./**/*<left><left><left><left><left><left><left><left>
+" Map ctrl+n to next vimgrep search, ctrl+p to previous vimgrep search and
+" ctrl+l to open the complete list of search results
+nmap <C-N> :cnext<CR>
+nmap <C-P> :cprev<CR>
+nmap <C-L> :cw<CR>
+
+" Close all 
+command! -bang QA :call TabQTabAll('<bang>')
+function! TabQTabAll(bang)
+  try
+    if tabpagenr('$') > 1
+      exec 'tabclose'.a:bang
+    else
+      exec 'qa'.a:bang
+    endif
+  catch
+    echohl ErrorMsg | echo v:exception | echohl NONE
+  endtry
+endfunction
+
+" problem with left, right, up and down key in arrow mode. It inserts A, B, C
+" or D letters. No idea what this is causing this, most solutions suggest
+" setting 'set nocompatible' but we already set this soooo... manual fix
+" ahead:
+imap OA <Esc>ki
+imap OB <Esc>ji
+imap OC <Esc>li
+imap OD <Esc>hi
