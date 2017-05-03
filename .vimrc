@@ -19,12 +19,14 @@ Plugin 'vim-airline/vim-airline-themes'
 "Plugin 'powerline/powerline'
 "Plugin 'Valloric/YouCompleteMe'
 Plugin 'godlygeek/tabular'
-"Plugin 'wincent/terminus'
+Plugin 'wincent/terminus'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'zacanger/angr.vim'
 Plugin 'ajh17/Spacegray.vim'
 Plugin 'rayburgemeestre/phpfolding.vim'
+Plugin 'kchmck/vim-coffee-script'
 Plugin 'altercation/vim-colors-solarized.git'
+Plugin 'danilo-augusto/vim-afterglow'
 
 "filetype plugin indent on
 filetype plugin on
@@ -96,15 +98,6 @@ set modelines=0
 set visualbell
 set cursorline
 
-
-" assd max setting
-set smartindent
-set autoindent
-set tabstop=2
-set shiftwidth=2
-set expandtab
-set smarttab 
-
 " make search next apeear in the middle of the screen
 nnoremap n nzz
 nnoremap N Nzz
@@ -121,8 +114,9 @@ set synmaxcol=800
 " just unset it.
 "iunmap <Esc>[200~
 "vunmap <Esc>[200~
-inoremap <Esc> <Esc><Esc>
-vnoremap <Esc> <Esc><Esc>
+"inoremap <Esc> <Esc><Esc>
+"vnoremap <Esc> <Esc><Esc>
+
 
 " Colored line spacer after 80 characters
 " vim built in:
@@ -141,11 +135,11 @@ set colorcolumn=80
 "colorscheme angr
 
 " Spacegray dark
-"colorscheme spacegray
+colorscheme spacegray
 
 " Solarized dark
 set background=dark
-colorscheme solarized
+"colorscheme solarized
 
 " Solarized light
 "set background=light
@@ -266,7 +260,16 @@ endfunction
 " or D letters. No idea what this is causing this, most solutions suggest
 " setting 'set nocompatible' but we already set this soooo... manual fix
 " ahead:
-imap OA <Esc>ki
-imap OB <Esc>ji
-imap OC <Esc>li
-imap OD <Esc>hi
+"imap OA <Esc>ki
+"imap OB <Esc>ji
+"imap OC <Esc>li
+"imap OD <Esc>hi
+
+" assd max setting
+set smartindent
+set autoindent
+set tabstop=2
+set shiftwidth=2
+set expandtab
+set smarttab 
+
