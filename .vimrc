@@ -1,3 +1,7 @@
+if !exists("lightmode")
+  let lightmode=0
+endif
+
 set nocompatible
 filetype off
 set rtp+=~/.vim/bundle/vundle/
@@ -11,7 +15,7 @@ Plugin 'chriskempson/base16-vim'
 Plugin 'jasonlong/dotfiles'
 Plugin 'StanAngeloff/php.vim'
 Plugin 'vim-scripts/matchit.zip'
-Plugin 'LaTeX-Box-Team/LaTeX-Box'
+"Plugin 'LaTeX-Box-Team/LaTeX-Box'
 "Plugin 'vim-scripts/cscope.vim'
 "Plugin 'mbbill/code_complete'
 Plugin 'vim-airline/vim-airline'
@@ -24,9 +28,13 @@ Plugin 'scrooloose/nerdcommenter'
 Plugin 'zacanger/angr.vim'
 Plugin 'ajh17/Spacegray.vim'
 Plugin 'rayburgemeestre/phpfolding.vim'
-Plugin 'kchmck/vim-coffee-script'
+"Plugin 'kchmck/vim-coffee-script'
 Plugin 'altercation/vim-colors-solarized.git'
 Plugin 'danilo-augusto/vim-afterglow'
+Plugin 'kien/ctrlp.vim'
+"Plugin 'lervag/vimtex'
+" let g:checklist_use_timestamps = 1
+" Plugin 'vim-scripts/checklist.vim'
 
 "filetype plugin indent on
 filetype plugin on
@@ -34,6 +42,21 @@ let NERDTreeShowHidden=1
 syntax on
 scriptencoding utf-8
 set encoding=utf-8
+
+"colorscheme angr
+
+if lightmode
+  " Solarized light
+  set background=light
+  colorscheme solarized
+else
+  " Spacegray dark
+  colorscheme spacegray
+endif
+
+" Solarized dark
+"set background=dark
+"colorscheme solarized
 
 " Map ü and Ü to insert a line below or above
 nnoremap ü :call append(line('.'), '')<CR>
@@ -72,6 +95,7 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+let g:syntastic_mode_map = { 'mode': 'active', 'active_filetypes': [],'passive_filetypes': ['tex'] }
 
 " PHP internal folding we use a plugin
 "let g:php_folding = 2
@@ -106,7 +130,8 @@ nnoremap N Nzz
 " also affects <leader> delay so we just remap <esc> to work instantly
 set notimeout
 set ttimeout
-set timeoutlen=200 ttimeoutlen=0
+"set timeoutlen=200 ttimeoutlen=0
+set timeoutlen=0 ttimeoutlen=0
 syntax sync minlines=100
 syntax sync maxlines=240
 set synmaxcol=800
@@ -131,19 +156,6 @@ set colorcolumn=80
 "  highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 " match OverLength /\%81v.\+/
 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa     
-
-"colorscheme angr
-
-" Spacegray dark
-colorscheme spacegray
-
-" Solarized dark
-set background=dark
-"colorscheme solarized
-
-" Solarized light
-"set background=light
-"colorscheme solarized
 
 set shortmess+=A
 set relativenumber 
@@ -272,4 +284,32 @@ set tabstop=2
 set shiftwidth=2
 set expandtab
 set smarttab 
+
+" Checklist
+au BufNewFile,BufRead *.chklst setf chklst
+
+" ASSD open .cpy files with php syntax
+au BufRead,BufNewFile *.cpy set filetype=php
+" .vue files open with html syntax
+au BufRead,BufNewFile *.vue set filetype=html
+au BufRead,BufNewFile *.vuex set filetype=html
+
+set iskeyword=@,48-57,192-255,_
+
+set wildignore+=**/node_modules/**,**/bower_components/**,*.xsd,*.png,*.jpg,*jpeg,*gif,*tif,*woff,*eot
+
+" macro for tex files to compile
+"nmap <C-T> :call CompileLatexFile()<CR>
+function! CompileLatexFile()
+  execute "!pdflatex '" . expand('%') . "'"
+  execute "!open '" . expand('%:r') . "'.pdf"
+endfunction
+function! CompileLatexFileWithBib()
+  execute "!pdflatex '" . expand('%') . "' && bibtex '" . expand('%:r') . "' && pdflatex '" . expand('%') . "' && pdflatex '" . expand('%') . "'"
+  execute "!open '" . expand('%:r') . "'.pdf"
+endfunction
+autocmd FileType tex set colorcolumn=0
+autocmd FileType tex set synmaxcol=0
+nmap <leader>t :call CompileLatexFile()<CR>
+nmap <leader>T :call CompileLatexFileWithBib()<CR>
 
