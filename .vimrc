@@ -23,6 +23,7 @@ Plugin 'vim-airline/vim-airline-themes'
 "Plugin 'powerline/powerline'
 "Plugin 'Valloric/YouCompleteMe'
 Plugin 'godlygeek/tabular'
+Plugin 'plasticboy/vim-markdown'
 Plugin 'wincent/terminus'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'zacanger/angr.vim'
@@ -32,6 +33,7 @@ Plugin 'rayburgemeestre/phpfolding.vim'
 Plugin 'altercation/vim-colors-solarized.git'
 Plugin 'danilo-augusto/vim-afterglow'
 Plugin 'kien/ctrlp.vim'
+Plugin 'elixir-editors/vim-elixir'
 "Plugin 'lervag/vimtex'
 " let g:checklist_use_timestamps = 1
 " Plugin 'vim-scripts/checklist.vim'
@@ -95,7 +97,7 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
-let g:syntastic_mode_map = { 'mode': 'active', 'active_filetypes': [],'passive_filetypes': ['tex'] }
+let g:syntastic_mode_map = { 'mode': 'active', 'active_filetypes': [],'passive_filetypes': ['python','tex','html'] }
 
 " PHP internal folding we use a plugin
 "let g:php_folding = 2
@@ -108,8 +110,6 @@ let g:syntastic_mode_map = { 'mode': 'active', 'active_filetypes': [],'passive_f
 "let b:phpfold_group_args=0
 "autocmd FileType php set foldmethod=syntax
 
-" // opens the search with the current selection pasted into it
-vnoremap // y/<C-R>"<CR>
 
 " Basic options
 set tabstop=4
@@ -169,6 +169,9 @@ let NERDTreeShowLineNumbers=1
 " make sure relative line numbers are used
 autocmd FileType nerdtree setlocal relativenumber
 
+" remain open when new tab is created
+let g:nerdtree_tabs_open_on_console_startup=1
+
 " Needed for YouCompleteMe
 "let g:ycm_global_ycm_extra_conf='~/.vim/bundle/YouCompleteMe/ycm_extra_conf.py'
 
@@ -223,10 +226,6 @@ vmap <C-C> <leader>c<Space>
 
 " map mapleader to ä
 let mapleader = "ä"
-
-" let p not overwrite the default register
-xnoremap p "_dP
-"xnoremap p pgv"@=v:register.'y'<c-r>
 
 "nnoremap <Tab> I
 
@@ -285,21 +284,24 @@ set shiftwidth=2
 set expandtab
 set smarttab 
 
-" Checklist
-au BufNewFile,BufRead *.chklst setf chklst
-
 " ASSD open .cpy files with php syntax
+au BufRead,BufNewFile *.cpy set filetype=php
 au BufRead,BufNewFile *.cpy set filetype=php
 " .vue files open with html syntax
 au BufRead,BufNewFile *.vue set filetype=html
 au BufRead,BufNewFile *.vuex set filetype=html
 
 set iskeyword=@,48-57,192-255,_
+au BufRead,BufNewFile *.cpy set iskeyword=@,48-57,192-255,_
+au BufRead,BufNewFile *.cpy set iskeyword=@,48-57,192-255,_ 
 
 set wildignore+=**/node_modules/**,**/bower_components/**,*.xsd,*.png,*.jpg,*jpeg,*gif,*tif,*woff,*eot
 
-" macro for tex files to compile
-"nmap <C-T> :call CompileLatexFile()<CR>
+" silent avoids "hit enter to continue" prompt after a command but redraw is
+" needed. http://vim.wikia.com/wiki/Avoiding_the_%22Hit_ENTER_to_continue%22_prompts
+command! -nargs=1 Silent
+\   execute 'silent !' . <q-args>
+\ | execute 'redraw!'
 function! CompileLatexFile()
   execute "!pdflatex '" . expand('%') . "'"
   execute "!open '" . expand('%:r') . "'.pdf"
@@ -308,8 +310,85 @@ function! CompileLatexFileWithBib()
   execute "!pdflatex '" . expand('%') . "' && bibtex '" . expand('%:r') . "' && pdflatex '" . expand('%') . "' && pdflatex '" . expand('%') . "'"
   execute "!open '" . expand('%:r') . "'.pdf"
 endfunction
+function! CompileLatexFileBachelorThesis()
+  execute "Silent /Users/jimetsu/Google\\ Drive/Uni\\ LMU/Bachelorarbeit/compile_tex_only.sh"
+endfunction
+function! CompileLatexFileWithBibBachelorThesis()
+  execute "Silent /Users/jimetsu/Google\\ Drive/Uni\\ LMU/Bachelorarbeit/compile.sh"
+endfunction
 autocmd FileType tex set colorcolumn=0
 autocmd FileType tex set synmaxcol=0
+autocmd FileType md set colorcolumn=0
+autocmd FileType md set synmaxcol=0
 nmap <leader>t :call CompileLatexFile()<CR>
 nmap <leader>T :call CompileLatexFileWithBib()<CR>
+nmap <leader>b :call CompileLatexFileBachelorThesis()<CR>
+nmap <leader>B :call CompileLatexFileWithBibBachelorThesis()<CR>
+
+" // opens the search with the current selection pasted into it
+vnoremap // y/<C-R>"<CR>
+
+" Search for selected text, forwards or backwards.
+vnoremap <silent> * :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy?<C-R><C-R>=substitute(
+  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+
+nmap <leader>o :Silent open .<CR>
+
+" Rename tabs to show tab number.
+" (Based on http://stackoverflow.com/questions/5927952/whats-implementation-of-vims-default-tabline-function)
+if exists("+showtabline")
+    function! MyTabLine()
+        let s = ''
+        let wn = ''
+        let t = tabpagenr()
+        let i = 1
+        while i <= tabpagenr('$')
+            let buflist = tabpagebuflist(i)
+            let winnr = tabpagewinnr(i)
+            let s .= '%' . i . 'T'
+            let s .= (i == t ? '%1*' : '%2*')
+            let s .= ' '
+            let wn = tabpagewinnr(i,'$')
+
+            let s .= '%#TabNum#'
+            let s .= i
+            " let s .= '%*'
+            let s .= (i == t ? '%#TabLineSel#' : '%#TabLine#')
+            let bufnr = buflist[winnr - 1]
+            let file = bufname(bufnr)
+            let buftype = getbufvar(bufnr, 'buftype')
+            if buftype == 'nofile'
+                if file =~ '\/.'
+                    let file = substitute(file, '.*\/\ze.', '', '')
+                endif
+            else
+                let file = fnamemodify(file, ':p:t')
+            endif
+            if file == ''
+                let file = '[No Name]'
+            endif
+            let s .= ' ' . file . ' '
+            let i = i + 1
+        endwhile
+        let s .= '%T%#TabLineFill#%='
+        let s .= (tabpagenr('$') > 1 ? '%999XX' : 'X')
+        return s
+    endfunction
+    set stal=2
+    set tabline=%!MyTabLine()
+    set showtabline=1
+    highlight link TabNum Special
+endif
+
+" let p not overwrite the default register
+xnoremap p "_dP
+"xnoremap p pgv"@=v:register.'y'<c-r>
 
