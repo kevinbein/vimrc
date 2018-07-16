@@ -116,7 +116,11 @@ set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set nu
-set clipboard=unnamed
+if has('unix') 
+  set clipboard=unnamedplus
+else
+  set clipboard=unnamed
+endif
 set modelines=0
 " set listchars=tab:▶\ ,eol:¬,extends:>,preceeds:<
 set visualbell
