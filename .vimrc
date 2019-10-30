@@ -11,9 +11,10 @@ Plugin 'scrooloose/nerdtree.git'
 Plugin 'scrooloose/syntastic'
 Plugin 'jistr/vim-nerdtree-tabs'
 Plugin 'tpope/vim-surround'
-Plugin 'chriskempson/base16-vim'
-Plugin 'jasonlong/dotfiles'
-Plugin 'StanAngeloff/php.vim'
+"Plugin 'chriskempson/base16-vim'
+"Plugin 'jasonlong/dotfiles'
+"Plugin 'StanAngeloff/php.vim'
+" Used to enhance the power of % in different languages
 Plugin 'vim-scripts/matchit.zip'
 "Plugin 'LaTeX-Box-Team/LaTeX-Box'
 "Plugin 'vim-scripts/cscope.vim'
@@ -22,18 +23,26 @@ Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 "Plugin 'powerline/powerline'
 "Plugin 'Valloric/YouCompleteMe'
+" The /Tab command to line up stuff
 Plugin 'godlygeek/tabular'
-Plugin 'plasticboy/vim-markdown'
+"Plugin 'plasticboy/vim-markdown'
 Plugin 'wincent/terminus'
+" used to comment stuff, I mainly use äcc, äcu and äcm
 Plugin 'scrooloose/nerdcommenter'
-Plugin 'zacanger/angr.vim'
+"Plugin 'zacanger/angr.vim'
 Plugin 'ajh17/Spacegray.vim'
-Plugin 'rayburgemeestre/phpfolding.vim'
+"Plugin 'rayburgemeestre/phpfolding.vim'
 "Plugin 'kchmck/vim-coffee-script'
 Plugin 'altercation/vim-colors-solarized.git'
-Plugin 'danilo-augusto/vim-afterglow'
+"Plugin 'danilo-augusto/vim-afterglow'
+" I should use this more to scroll files ...
 Plugin 'kien/ctrlp.vim'
+" just syntax highlightiing
 Plugin 'elixir-editors/vim-elixir'
+"Plugin 'jceb/vim-orgmode'
+"Plugin 'tpope/vim-speeddating'
+Plugin 'mxw/vim-prolog'
+Plugin 'JuliaEditorSupport/julia-vim'
 "Plugin 'lervag/vimtex'
 " let g:checklist_use_timestamps = 1
 " Plugin 'vim-scripts/checklist.vim'
@@ -55,6 +64,9 @@ else
   " Spacegray dark
   colorscheme spacegray
 endif
+
+let g:spacegray_underline_search = 0
+hi CursorLine term=bold cterm=bold guibg=Grey40
 
 " Solarized dark
 "set background=dark
@@ -83,11 +95,11 @@ set laststatus=2
 " Folding
 "let g:php_folding=2
 "set foldmethod=indent
-set foldlevel=2
-set foldlevelstart=2
-set foldenable
-set foldnestmax=5
-hi Folded ctermbg=237
+"set foldlevel=2
+"set foldlevelstart=2
+"set foldenable
+"set foldnestmax=5
+"hi Folded ctermbg=237
 
 " Syntastic settings
 set statusline+=%#warningmsg#
@@ -98,6 +110,9 @@ let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_mode_map = { 'mode': 'active', 'active_filetypes': [],'passive_filetypes': ['python','tex','html'] }
+"let g:syntastic_cpp_compiler = 'clang++'
+let g:syntastic_cpp_compiler = 'g++'
+let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++'
 
 " PHP internal folding we use a plugin
 "let g:php_folding = 2
@@ -116,11 +131,13 @@ set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set nu
-if has('unix') 
-  set clipboard=unnamedplus
-else
+"if has('unix')
+"set clipboard=unnamedplus
+"else
+  " on my new macbook, I had problems with setting this to unnamendplus, it 
+  " would not copy to the general register, unnamed only worked though ...
   set clipboard=unnamed
-endif
+"endif
 set modelines=0
 " set listchars=tab:▶\ ,eol:¬,extends:>,preceeds:<
 set visualbell
@@ -150,7 +167,11 @@ set synmaxcol=800
 " Colored line spacer after 80 characters
 " vim built in:
 " let &colorcolumn=join(range(81,999),",")
-highlight ColorColumn ctermbg=235 guibg=#4c4d47
+if lightmode
+  highlight ColorColumn ctermbg=7
+else
+  highlight ColorColumn ctermbg=235 guibg=#4c4d47
+endif
 set colorcolumn=80
 " Only highlight if something actually exceeds the 80 characters:
 " everything:
@@ -159,11 +180,11 @@ set colorcolumn=80
 " only one character
 "  highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 " match OverLength /\%81v.\+/
-"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa     
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
 set shortmess+=A
-set relativenumber 
-set number 
+set relativenumber
+set number
 set backspace=indent,eol,start
 nmap <silent> <C-T> :NERDTreeToggle<CR>
 "set number
@@ -175,6 +196,7 @@ autocmd FileType nerdtree setlocal relativenumber
 
 " remain open when new tab is created
 let g:nerdtree_tabs_open_on_console_startup=1
+let g:NERDTreeQuitOnOpen=0
 
 " Needed for YouCompleteMe
 "let g:ycm_global_ycm_extra_conf='~/.vim/bundle/YouCompleteMe/ycm_extra_conf.py'
@@ -209,15 +231,15 @@ let g:airline_section_z = airline#section#create(['windowswap', '%3p%% ', 'linen
 
 " Keep search matches in the middle of the window and pulse the line when
 " moving to them.
-nnoremap n nzzzv
-nnoremap N Nzzzv
+"nnoremap n nzzzv
+"nnoremap N Nzzzv
 
 set path+=**
 set wildmenu
 
-command! MakeTags !ctags -R .
+"command! MakeTags !ctags -R .
 
-"set fillchars+=vert:\ 
+"set fillchars+=vert:\
 set fillchars+=vert:│
 highlight VertSplit ctermbg=NONE guibg=NONE
 highlight VertSplit cterm=NONE
@@ -225,8 +247,8 @@ highlight VertSplit cterm=NONE
 highlight VertSplit cterm=NONE
 
 " map ctrl c to toggle comment
-nmap <C-C> <leader>c<Space>
-vmap <C-C> <leader>c<Space>
+"nmap <C-C> <leader>c<Space>
+"vmap <C-C> <leader>c<Space>
 
 " map mapleader to ä
 let mapleader = "ä"
@@ -257,7 +279,7 @@ nmap <C-N> :cnext<CR>
 nmap <C-P> :cprev<CR>
 nmap <C-L> :cw<CR>
 
-" Close all 
+" Close all
 command! -bang QA :call TabQTabAll('<bang>')
 function! TabQTabAll(bang)
   try
@@ -275,10 +297,10 @@ endfunction
 " or D letters. No idea what this is causing this, most solutions suggest
 " setting 'set nocompatible' but we already set this soooo... manual fix
 " ahead:
-"imap OA <Esc>ki
-"imap OB <Esc>ji
-"imap OC <Esc>li
-"imap OD <Esc>hi
+"imap OA <Esc>ki
+"imap OB <Esc>ji
+"imap OC <Esc>li
+"imap OD <Esc>hi
 
 " assd max setting
 set smartindent
@@ -286,7 +308,7 @@ set autoindent
 set tabstop=2
 set shiftwidth=2
 set expandtab
-set smarttab 
+set smarttab
 
 " ASSD open .cpy files with php syntax
 au BufRead,BufNewFile *.cpy set filetype=php
@@ -297,7 +319,7 @@ au BufRead,BufNewFile *.vuex set filetype=html
 
 set iskeyword=@,48-57,192-255,_
 au BufRead,BufNewFile *.cpy set iskeyword=@,48-57,192-255,_
-au BufRead,BufNewFile *.cpy set iskeyword=@,48-57,192-255,_ 
+au BufRead,BufNewFile *.cpy set iskeyword=@,48-57,192-255,_
 
 set wildignore+=**/node_modules/**,**/bower_components/**,*.xsd,*.png,*.jpg,*jpeg,*gif,*tif,*woff,*eot
 
@@ -330,7 +352,8 @@ nmap <leader>b :call CompileLatexFileBachelorThesis()<CR>
 nmap <leader>B :call CompileLatexFileWithBibBachelorThesis()<CR>
 
 " // opens the search with the current selection pasted into it
-vnoremap // y/<C-R>"<CR>
+" # does the same because of below...
+"vnoremap // y/<C-R>"<CR>
 
 " Search for selected text, forwards or backwards.
 vnoremap <silent> * :<C-U>
@@ -394,5 +417,14 @@ endif
 
 " let p not overwrite the default register
 xnoremap p "_dP
+vnoremap p "_dP
 "xnoremap p pgv"@=v:register.'y'<c-r>
+
+" smooth scrolling for ctrl+u and ctrl+d
+"map <C-U> <C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y>
+"map <C-D> <C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E>
+
+"set list          " Display unprintable characters f12 - switches
+"set listchars=tab:•\ ,trail:•,extends:»,precedes:« " Unprintable chars mapping
+" trigger with :set invlist
 
