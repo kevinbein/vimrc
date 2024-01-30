@@ -2,10 +2,11 @@ if !exists("lightmode")
   let lightmode=0
 endif
 
-set nocompatible
-filetype off
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set nocompatible              " be iMproved, required
+filetype off                  " required
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+Plugin 'VundleVim/Vundle.vim'
 Plugin 'gmarik/vundle'
 Plugin 'scrooloose/nerdtree.git'
 Plugin 'scrooloose/syntastic'
@@ -30,7 +31,8 @@ Plugin 'wincent/terminus'
 " used to comment stuff, I mainly use äcc, äcu and äcm
 Plugin 'scrooloose/nerdcommenter'
 "Plugin 'zacanger/angr.vim'
-Plugin 'ajh17/Spacegray.vim'
+"Plugin 'ajh17/Spacegray.vim'
+Plugin 'catppuccin/vim'
 "Plugin 'rayburgemeestre/phpfolding.vim'
 "Plugin 'kchmck/vim-coffee-script'
 Plugin 'altercation/vim-colors-solarized.git'
@@ -44,8 +46,14 @@ Plugin 'elixir-editors/vim-elixir'
 Plugin 'mxw/vim-prolog'
 Plugin 'JuliaEditorSupport/julia-vim'
 "Plugin 'lervag/vimtex'
+Plugin 'dart-lang/dart-vim-plugin'
+Plugin 'leafgarland/typescript-vim'
+Plugin 'peitalin/vim-jsx-typescript'
+Plugin 'fcpg/vim-osc52'
 " let g:checklist_use_timestamps = 1
 " Plugin 'vim-scripts/checklist.vim'
+call vundle#end()            " required
+filetype plugin indent on    " required
 
 "filetype plugin indent on
 filetype plugin on
@@ -56,17 +64,20 @@ set encoding=utf-8
 
 "colorscheme angr
 
+set termguicolors
 if lightmode
   " Solarized light
   set background=light
   colorscheme solarized
 else
-  " Spacegray dark
-  colorscheme spacegray
+  colorscheme catppuccin_mocha 
+  let g:airline_theme = 'catppuccin_mocha'
+  " Fix catppuccin_mocha highlight color
+  hi CursorLine   cterm=NONE guibg=#2c2d38
 endif
 
 let g:spacegray_underline_search = 0
-hi CursorLine term=bold cterm=bold guibg=Grey40
+"hi CursorLine term=bold cterm=bold guibg=Grey40
 
 " Solarized dark
 "set background=dark
@@ -428,3 +439,8 @@ vnoremap p "_dP
 "set listchars=tab:•\ ,trail:•,extends:»,precedes:« " Unprintable chars mapping
 " trigger with :set invlist
 
+let g:NERDTreeBookmarksSort=0
+
+nmap <leader>ff $zf%
+
+vmap <C-c> y:Oscyank<cr>
